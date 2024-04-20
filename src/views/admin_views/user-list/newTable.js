@@ -28,6 +28,9 @@ import "@styles/react/libs/flatpickr/flatpickr.scss";
 import SidebarNewUsers from "./Sidebar";
 import axiosInstance from "../../../utility/axiosInstance";
 
+// React Query imports
+import { useQuery } from "react-query";
+
 const DataTableOfUsers = () => {
   // ** States
   const [Picker, setPicker] = useState("");
@@ -48,34 +51,57 @@ const DataTableOfUsers = () => {
       age: "N/A",
       salary: "N/A",
       status: "N/A",
-    }
+    },
   ]);
-  console.log("🚀 ~ DataTableOfUsers ~ data:", data);
+
+  // fetching Data using react query
+  const {
+    data: usersData,
+    isLoading,
+    error,
+  } = useQuery("usersData", async () => {
+    const response = await axiosInstance.get("/admin/get/all/users");
+    const fetchedData = response.data.data.map((item) => {
+      let firstName = item?.firstName ?? "N/A";
+      let lastName = item?.lastName ?? " ";
+      return {
+        fullName: firstName + " " + lastName,
+        id: item.id || "N/A",
+        email: item?.email || "N/A",
+        role: item?.role,
+        phoneNumber: item?.phoneNumber || "N/A",
+        country: item?.country || "N/A",
+        state: item?.state || "N/A",
+      };
+    });
+    return fetchedData;
+  });
+
+  console.log("data fetched by react query", usersData);
   // ** Function To fetch usersData
- async function getUsersData(){
-  const response = await axiosInstance.get("/admin/get/all/users");
-  const fetchedData = response.data.data.map((item) => {
-  let firstName = item?.firstName ?? "N/A"
-  let lastName = item?.lastName ?? " "
-    return {
-      fullName: firstName + ' ' + lastName,
-      id: item.id || "N/A",
-      email: item?.email || "N/A",
-      role: item?.role,
-      phoneNumber: item?.phoneNumber || "N/A",
-      country: item?.country || "N/A",
-      state: item?.state || "N/A",
-    };
-  })
-  setData(fetchedData);
-  
-}
+  // async function getUsersData() {
+  //   const response = await axiosInstance.get("/admin/get/all/users");
+  //   const fetchedData = response.data.data.map((item) => {
+  //     let firstName = item?.firstName ?? "N/A";
+  //     let lastName = item?.lastName ?? " ";
+  //     return {
+  //       fullName: firstName + " " + lastName,
+  //       id: item.id || "N/A",
+  //       email: item?.email || "N/A",
+  //       role: item?.role,
+  //       phoneNumber: item?.phoneNumber || "N/A",
+  //       country: item?.country || "N/A",
+  //       state: item?.state || "N/A",
+  //     };
+  //   });
+  //   setData(fetchedData);
+  // }
 
   // ** Get initial Data
-  useEffect(() => {
-    getUsersData();
-  }, []);
-  console.log("Data:", data);
+  // useEffect(() => {
+  //   getUsersData();
+  // }, []);
+  // console.log("Data:", data);
   // ** Function to handle Pagination
   const handlePagination = (page) => setCurrentPage(page.selected);
   // ** Function to handle sidebar
@@ -90,36 +116,36 @@ const DataTableOfUsers = () => {
       selector: (row) => row.fullName,
     },
     {
-      name: 'Email',
+      name: "Email",
       sortable: true,
-      minWidth: '250px',
-      selector: row => row.email
+      minWidth: "250px",
+      selector: (row) => row.email,
     },
     {
-      name: 'Role',
+      name: "Role",
       sortable: true,
-      minWidth: '250px',
-      selector: row => row.role
+      minWidth: "250px",
+      selector: (row) => row.role,
     },
     {
-      name: 'phoneNumber',
+      name: "phoneNumber",
       sortable: true,
-      minWidth: '150px',
-      selector: row => row.phoneNumber
+      minWidth: "150px",
+      selector: (row) => row.phoneNumber,
     },
     {
-      name: 'country',
+      name: "country",
       sortable: true,
-      minWidth: '150px',
-      selector: row => row.country
+      minWidth: "150px",
+      selector: (row) => row.country,
     },
 
     {
-      name: 'state',
+      name: "state",
       sortable: true,
-      minWidth: '100px',
-      selector: row => row.state
-    }
+      minWidth: "100px",
+      selector: (row) => row.state,
+    },
   ];
 
   // ** Table data to render
