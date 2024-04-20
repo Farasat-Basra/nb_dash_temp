@@ -1,0 +1,116 @@
+{
+   "Dashboard": "الواجهة",
+   "KYC Process": "إعرف عميلك KYC",
+   "Operational Overview": "بيانات العمليات",
+   "Customer Directory": "سجل العملاء",
+   "All action": "جميع الإجراءات",
+   "Everyone": "الجميع",
+   "Newest": "التحديث",
+   "Business Directory": "سجل العمل",
+   "Financial": "مالي",
+   "Activity": "أنشطة",
+   "Configuration": "الإعدادات",
+   "Screening Priority": "أولويات المسح",
+   "Decision Criterion": "إعدادات الإجراءات",
+   "Simulation": "محاكاة",
+   "System Connectivity": "إتصال المنظومة",
+   "System Connection": "إتصال المنظومة",
+   "Database Connection": "إتصال قاعدة البيانات",
+   "Manage License": "إعدادات رخص الإتشغيل",
+   "Key or License": "إخصة التشغيل",
+   "Welcome to NAfith! 👋🏻": "مرحبا بكم في نافذ",
+   "Please sign-in to your account and start the adventure": "الرجاء دخول الحساب والبدء",
+   "Email:": "الإيمييل:",
+   "Password:": "كلمة المرور:",
+   "Remember Me ?": "تذكرني؟",
+   "Forgot Password ?": "نسيت كلمة المرور؟",
+   "Log in": "الدخول",
+   "Sign Up": "التسجيل",
+   "I18n": "I18n",
+   "or": "أو",
+   "Account": "الحساب",
+   "Personal": "شخصي",
+   "Verification": "تأكيد",
+   "Account Details": "معلومات الحساب",
+   "Enter Information": "أدخل البيانات",
+   "Notify of completion": "تنبيه الإكتمال",
+   "Account Information": "معلومات الحساب",
+   "Enter Your Account Details": "أدخل معلومات حسابك",
+   "User Name:": "إسم المستخدم:",
+   "Confirm Password:": "تأكيد كلمة المرور:",
+   "Previous": "السابق",
+   "Next": "التالي",
+   "Personal Information": "البيانات الشخصية",
+   "Last Name:": "الإسم الأخير:",
+   "Country:": "البلد:",
+   "Nationality:": "الجنسية:",
+   "Birthday:": "تاريخ الميلاد:",
+   "Gender:": "الجنس:",
+   "Verify your email": "تأكيد البريد الإلكتروني",
+   "Account activation link sent to your email address: hello@example.com Please follow the link inside to continue.": "تم إرسال رابط تفعيل الحساب إلى بريدك الإلكتروني hello@example.com ، الرجاء المتابعة بضغط الرابط من بريدك الإلكتروني",
+   "Didn't get the mail?": "لم تستلم الإيميل؟",
+   "Resend": "إعادة الإرسال",
+   "Skip for Now": "التخطي مؤقتًا",
+   "FirstName LastName": "الإسم الأول الإسم الأخير",
+   "First Name": "الإسم الأول",
+   "Last Name": "الإسم الأخير",
+   "ID or Passport Number:": "الهوية أو رقم الجواز:",
+   "ID": "الهوية",
+   "Or": "أو",
+   "Passport Number": "رقم الجواز",
+   "Date of Birth:": "تاريخ الميلاد:",
+   "Addresss:": "العنوان:",
+   "Detailed Report & Search Results": "التقارير المفصلة ونتائج البحث",
+   "Detailed Report": "التقارير المفصلة",
+   "Search Results": "نتائج البحث",
+   "Search HIT Assessment": "تقييم البحث",
+   "Filter by": "تصفية حسب",
+   "KYC Dashboard Analytics": "واجهة تحاليل KYC",
+   "Statistics": "الإحصائيات",
+   "System Vitals": "إحصاءات النظام",
+   "Customers Screened": "العملاء الممسوحين",
+   "Compliance rate": "نسبة الامتثال",
+   "Customers": "العملاء",
+   "Database Vitals": "إحصاءات قاعدة البيانات",
+   "Businesses": "الشركات",
+   "Transactions": "العمليات",
+   "KYC Screening": "مسح KYC",
+   "Screening Report": "تقرير المسح",
+   "Enhance Due Diligence": "العناية الواجبة المطورة",
+   "Transaction Reporting": "تقارير العمليات",
+   "Upload New Photo": "تحميل صورة جديدة",
+   "Reset": "إعادة ضبط",
+   "Scan details via OCR": "مسح المعلومات عبر OCR",
+   "ID Number:": "رقم الهوية:",
+   "Passport Number:": "رقم الجواز:",
+   "City, Country:": "المدينة، البلد:",
+   "City": "المدينة",
+   "Country": "البلد",
+   "Save & Continue": "حفظ ومتابعة",
+   "Save": "حفظ",
+   "&": "و",
+   "Continue": "متابعة",
+   "Upload Files": "تحميل الملفات",
+   "Drop files here or click to upload.": "أفلت الملفات هنا أو انقر للتحميل.",
+   "Drop Files Here": "أفلت الملفات هنا",
+   "Click to Upload": "انقر للتحميل",
+   "Searching & Screening Data": "البحث ومسح البيانات",
+   "Searching": "البحث",
+   "Screening": "الفحص",
+   "Data": "البيانات",
+   "Change Screening Priority": "تغيير أولوية الفحص",
+   "Edit Details": "تحرير التفاصيل",
+   "Cancel Screening": "إلغاء الفحص",
+   "Are You Sure You Want to Cancel Screening?": "هل أنت متأكد أنك تريد إلغاء الفحص؟",
+   "Alert to Regulatory User": "تنبيه المستخدم التنظيمي",
+   "Cancel": "إلغاء",
+   "Upload business logo": "تحميل شعار المنشأة",
+   "Business Name:": "اسم المنشأة:",
+   "Registration Number:": "رقم التسجيل:",
+   "Phone:": "الهاتف:",
+   "Business Details:": "تفاصيل المنشأة:",
+   "Upload Store Front Image": "تحميل صورة واجهة المتجر",
+   "Upload Registration Document": "تحميل مستند التسجيل",
+   "Upload other Document": "تحميل مستند آخر",
+   "Create User": "إنشاء مستخدم"
+}
