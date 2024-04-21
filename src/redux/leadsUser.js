@@ -193,6 +193,7 @@ const initialState = {
     },
   ],
   error: null,
+  LeadsID: null,
   selectedLeads: [],
   isSelectedLeads: false,
   singleLeads: [],
@@ -234,13 +235,17 @@ const leadsUserSlice = createSlice({
             (item) => !tags.includes(item)
           ));
       }
-      state.isSelectedLeads = state.selectedLeads.length > 0 ? true : false
+      state.isSelectedLeads = state.selectedLeads.length > 0 ? true : false;
+    },
+    setLeadsID: (state, action) => {
+      console.log("payload", action.payload);
+      state.LeadsID = action.payload;
     },
 
     setAllSelectedLeads: (state, action) => {
-      const {  leadsIds } = action.payload;
+      const { leadsIds } = action.payload;
       state.selectedLeads = leadsIds;
-      state.isSelectedLeads = state.selectedLeads.length > 0 ? true : false
+      state.isSelectedLeads = state.selectedLeads.length > 0 ? true : false;
     },
     setRemoveTags: (state, action) => {
       state.removeTags = action.payload;
@@ -332,5 +337,6 @@ export const {
   setSelectedLeads,
   setAllSelectedLeads,
   setRemoveTags,
+  setLeadsID,
 } = leadsUserSlice.actions;
 export default leadsUserSlice.reducer;

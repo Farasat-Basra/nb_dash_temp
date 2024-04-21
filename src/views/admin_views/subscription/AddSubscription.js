@@ -97,25 +97,25 @@ const AddSubscription = () => {
           </div>
           <Row tag='form' className='gy-1 pt-75' onSubmit={handleSubmit(onSubmit)}>
             <Col md={6} xs={12}>
-              <Label className='form-label' for='firstName'>
-                First Name
+              <Label className='form-label' for='amount'>
+                Amount
               </Label>
               <Controller
                 control={control}
-                name='firstName'
+                name='amount'
                 render={({ field }) => {
                   return (
                     <Input
                       {...field}
-                      id='firstName'
+                      id='amount'
                       placeholder='John'
                       value={field.value}
-                      invalid={errors.firstName && true}
+                      invalid={errors.amount && true}
                     />
                   )
                 }}
               />
-              {errors.firstName && <FormFeedback>Please enter a valid First Name</FormFeedback>}
+              {errors.amount && <FormFeedback>Please enter a valid First Name</FormFeedback>}
             </Col>
             <Col md={6} xs={12}>
               <Label className='form-label' for='lastName'>

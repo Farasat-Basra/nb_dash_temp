@@ -1,6 +1,4 @@
-import { useQuery } from "react-query";
-import axiosInstance from "../../../utility/axiosInstance";
-import { Link } from "react-router-dom";
+// ** Reactstrap Imports
 import {
   Badge,
   UncontrolledDropdown,
@@ -8,82 +6,79 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "reactstrap";
-import { Archive, FileText, MoreVertical, Trash2 } from "react-feather";
-import { getUser } from "../store";
-import { useState } from "react";
+import { Archive, FileText, Link, MoreVertical, Trash2 } from "react-feather";
 import { useAppDispatch } from "../../../utility/instances";
+import { useQuery } from "react-query";
+import axiosInstance from "../../../utility/axiosInstance";
+import { useState } from "react";
+import { setUserID } from "../../../redux/userSlice";
 import EditUser from "../user-list/EditUserForm";
-import { setLeadsID } from "../../../redux/leadsUser";
-export const useFetchLeads = () => {
-  return useQuery("leadsData", async () => {
-    let body;
-    if (!body) {
-      body = { currentPage: 1, itemsPerPage: 10 };
-    }
+
+// fetching all subscriptions
+export const useFetchSubscriptions = () => {
+  return useQuery("subscriptionsData", async () => {
     const response = await axiosInstance.get(
-      `/leads/getAllLeads?page=${body.currentPage}&limit=${body.itemsPerPage}`
+      "/admin/get/all/subscription/plan"
     );
-    console.log("res", response.data);
+    console.log(response.data.data);
     const fetchedData = response.data.data.map((item) => {
       let firstName = item?.firstName ?? "N/A";
       let lastName = item?.lastName ?? " ";
       return {
-        fullName: firstName + " " + lastName,
-        id: item._id || "N/A",
-        email: item?.email || "N/A",
-        position: item?.position || "N/A",
-        phoneNumber: item?.phoneNumber || "N/A",
-        country: item?.country || "N/A",
-        state: item?.state || "N/A",
+        amount: item.amount || "N/A",
+        status: item.status || "N/A",
+        expiryDate: item.expiryDate || "N/A",
+        createdAt: item.createdAt || "N/A",
+        updatedAt: item.updatedAt || "N/A",
       };
     });
     return fetchedData;
   });
 };
-// ** Leads Table Data
+
+// ** user Table Data
 export const advSearchColumns = [
   {
-    name: "Name",
+    name: "Amount",
     sortable: true,
     minWidth: "200px",
+    selector: (row) => ` $  ${row.amount}`,
+  },
+  {
+    name: "Status",
+    sortable: true,
+    minWidth: "250px",
     selector: (row) => (
       <div>
-        <Link to={`/apps/user/view/${row.id}`} className="text-secondary">
-          <p>{row.fullName}</p>
-        </Link>
+        {row.status === "active" ? (
+          <Badge pill color="success" className="me-1">
+            Active
+          </Badge>
+        ) : (
+          <Badge pill color="danger" className="me-1">
+            Inactive
+          </Badge>
+        )}
       </div>
     ),
   },
   {
-    name: "Email",
+    name: "ExpiryDate",
     sortable: true,
     minWidth: "250px",
-    selector: (row) => row.email,
+    selector: (row) => row.expiryDate,
   },
   {
-    name: "Role",
-    sortable: true,
-    minWidth: "250px",
-    selector: (row) => row.position,
-  },
-  {
-    name: "phoneNumber",
+    name: "CreatedAt",
     sortable: true,
     minWidth: "150px",
-    selector: (row) => row.phoneNumber,
+    selector: (row) => row.createdAt,
   },
   {
-    name: "country",
+    name: "UpdatedAt",
     sortable: true,
     minWidth: "150px",
-    selector: (row) => row.country,
-  },
-
-  {
-    name: "state",
-    sortable: true,
-    minWidth: "100px",
-    selector: (row) => row.state,
+    selector: (row) => row.updatedAt,
   },
   {
     name: "Actions",
@@ -97,7 +92,6 @@ export const advSearchColumns = [
 ];
 
 export const ActionsOption = ({ row }) => {
-  console.log("🚀 ~ ActionsOption ~ row:", row.id)
   const [show, setShow] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -111,21 +105,20 @@ export const ActionsOption = ({ row }) => {
         <MoreVertical
           size={14}
           className="cursor-pointer"
-          onClick={() => dispatch(setLeadsID(row.id))}
+          onClick={() => dispatch(setUserID(row.id))}
         />
       </DropdownToggle>
       <DropdownMenu>
         <DropdownItem
           tag={Link}
           className="w-100"
-          to={`/apps/leadsProfile`}
-          // onClick={() => store.dispatch(getUser(row.id))}
-          // onClick={() => dispatch(setLeadsID(row.id))}
+          to={`/apps/user/view/${row.id}`}
+          onClick={() => store.dispatch(getUser(row.id))}
         >
           <FileText size={14} className="me-50" />
           <span className="align-middle">Details</span>
         </DropdownItem>
-        {/* <DropdownItem tag="a" href="/" className="w-100">
+        <DropdownItem tag="a" href="/" className="w-100">
           <div onClick={toggle}>
             <EditUser setShow={setShow} show={show} />
           </div>
@@ -141,7 +134,7 @@ export const ActionsOption = ({ row }) => {
         >
           <Trash2 size={14} className="me-50" />
           <span className="align-middle">Delete</span>
-        </DropdownItem> */}
+        </DropdownItem>
       </DropdownMenu>
     </UncontrolledDropdown>
   );

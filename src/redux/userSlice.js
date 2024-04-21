@@ -13,6 +13,18 @@ export const createUser = createAsyncThunk(
   }
 );
 
+export const editUser = createAsyncThunk(
+  "/admin/create/user",
+  async (body, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.post(`/admin/create/user`, body);
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 export const getAllUsers = createAsyncThunk(
   "/admin/get/all/users",
   async (body, { rejectWithValue }) => {

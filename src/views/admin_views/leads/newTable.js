@@ -110,11 +110,12 @@ const DataTableOfLeads = () => {
     setSearchName(value);
     if (value.length) {
       updatedData = dataToFilter().filter((item) => {
-        const startsWith = item.full_name
+        console.log("item", item)
+        const startsWith = item.fullName
           .toLowerCase()
           .startsWith(value.toLowerCase());
 
-        const includes = item.full_name
+        const includes = item.fullName
           .toLowerCase()
           .includes(value.toLowerCase());
 
@@ -188,11 +189,11 @@ const DataTableOfLeads = () => {
     setSearchPost(value);
     if (value.length) {
       updatedData = dataToFilter().filter((item) => {
-        const startsWith = item.post
+        const startsWith = item.position
           .toLowerCase()
           .startsWith(value.toLowerCase());
 
-        const includes = item.post.toLowerCase().includes(value.toLowerCase());
+        const includes = item.position.toLowerCase().includes(value.toLowerCase());
 
         if (startsWith) {
           return startsWith;

@@ -28,6 +28,10 @@ import { selectThemeColors } from "@utils";
 
 // ** Styles
 import "@styles/react/libs/react-select/_react-select.scss";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useFetchUsers } from "./useFetchUsers";
+import { useSelector } from "react-redux";
+import axiosInstance from "../../../utility/axiosInstance";
 
 const statusOptions = [
   { value: "active", label: "Active" },
@@ -63,6 +67,18 @@ const defaultValues = {
 };
 
 const EditUser = ({ show, setShow, toggle }) => {
+  const { userID } = useSelector((state) => state.users);
+  const id = userID;
+  const getTodos = async () => {
+    const response = await axiosInstance.get("/admin/get/single/user/" + id);
+    return response.data;
+  };
+  // const { data } = useQuery("singleUserData", async () => {
+  //   const response = await axiosInstance.get("/admin/get/single/user/" + id);
+  //   return response.data;
+  // });
+  // console.log("singleUserData", data);
+
   // ** Hooks
   const {
     control,
@@ -71,7 +87,27 @@ const EditUser = ({ show, setShow, toggle }) => {
     formState: { errors },
   } = useForm({ defaultValues });
 
+  const queryClient = useQueryClient();
+  const query = useQuery({ queryKey: ["todos"], queryFn: getTodos });
+  const postTodo = async (data) => {
+    try {
+      const response = await axiosInstance.put("/admin/edit/user/" + id, data);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const mutation = useMutation({
+    mutationFn: postTodo,
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+
   const onSubmit = (data) => {
+    mutation.mutate(data);
+    // postTodo(data);
     if (Object.values(data).every((field) => field.length > 0)) {
       return null;
     } else {
@@ -88,7 +124,7 @@ const EditUser = ({ show, setShow, toggle }) => {
   return (
     <Fragment>
       <div className="d-flex align-items-center">
-        <Archive size={14} className="me-50" style={{ marginTop: "1px" }} />
+        <Archive size={14} className="me-50" />
         <p onClick={toggle}>Edit</p>
       </div>
       <Modal
@@ -269,10 +305,16 @@ const EditUser = ({ show, setShow, toggle }) => {
 
             <Col xs={12} className="text-center mt-2 pt-50">
               <Button
+                // onClick={() => {
+                //   mutation.mutate({
+                //     id: Date.now(),
+                //     title: "Do Laundry",
+                //   });
+                // }}
                 type="submit"
                 className="me-1"
                 color="primary"
-                onClick={() => setShow(false)}
+                // onClick={() => setShow(false)}
               >
                 Submit
               </Button>

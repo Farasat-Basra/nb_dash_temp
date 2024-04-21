@@ -16,34 +16,9 @@ import { Link } from "react-router-dom";
 import EditUser from "./EditUserForm";
 import { useAppDispatch } from "../../../utility/instances";
 import { setUserID } from "../../../redux/userSlice";
-// // ** custom useQuery hook
-// export const useFetchUsers = () => {
-//   return useQuery("usersData", async () => {
-//     const response = await axiosInstance.get("/admin/get/all/users");
-//     const fetchedData = response.data.data.map((item) => {
-//       let firstName = item?.firstName ?? "N/A";
-//       let lastName = item?.lastName ?? " ";
-//       return {
-//         fullName: firstName + " " + lastName,
-//         id: item.id || "N/A",
-//         email: item?.email || "N/A",
-//         role: item?.role,
-//         phoneNumber: item?.phoneNumber || "N/A",
-//         country: item?.country || "N/A",
-//         state: item?.state || "N/A",
-//       };
-//     });
-//     return fetchedData;
-//   }
-// );
-// };
-
-// ** custom hook with useEffect
-export function useFetchUsers() {
-  const [data, setData] = useState([]);
-  const dispatch = useAppDispatch();
-
-  const FetchData = async () => {
+// ** custom useQuery hook
+export const useFetchUsers = () => {
+  return useQuery("usersData", async () => {
     const response = await axiosInstance.get("/admin/get/all/users");
     const fetchedData = response.data.data.map((item) => {
       let firstName = item?.firstName ?? "N/A";
@@ -58,13 +33,38 @@ export function useFetchUsers() {
         state: item?.state || "N/A",
       };
     });
-    setData(fetchedData);
-  };
-  useEffect(() => {
-    FetchData();
-  }, []);
-  return data;
-}
+    return fetchedData;
+  }
+);
+};
+
+// ** custom hook with useEffect
+// export function useFetchUsers() {
+//   const [data, setData] = useState([]);
+//   const dispatch = useAppDispatch();
+
+//   const FetchData = async () => {
+//     const response = await axiosInstance.get("/admin/get/all/users");
+//     const fetchedData = response.data.data.map((item) => {
+//       let firstName = item?.firstName ?? "N/A";
+//       let lastName = item?.lastName ?? " ";
+//       return {
+//         fullName: firstName + " " + lastName,
+//         id: item._id || "N/A",
+//         email: item?.email || "N/A",
+//         role: item?.role,
+//         phoneNumber: item?.phoneNumber || "N/A",
+//         country: item?.country || "N/A",
+//         state: item?.state || "N/A",
+//       };
+//     });
+//     setData(fetchedData);
+//   };
+//   useEffect(() => {
+//     FetchData();
+//   }, []);
+//   return data;
+// }
 
 // ** user Table Data
 export const advSearchColumns = [
@@ -117,7 +117,6 @@ export const advSearchColumns = [
 ];
 
 export const ActionsOption = ({ row }) => {
-  console.log("🚀 ~ ActionsOption ~ row:", row);
   const [show, setShow] = useState(false);
   const dispatch = useAppDispatch();
 

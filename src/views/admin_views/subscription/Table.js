@@ -24,10 +24,9 @@ import {
 } from "reactstrap";
 
 import "@styles/react/libs/flatpickr/flatpickr.scss";
-import SidebarNewUsers from "./Sidebar";
-import { useFetchUsers, advSearchColumns } from "./useFetchUsers";
+import { useFetchSubscriptions, advSearchColumns } from "./data";
 
-const DataTableOfUsers = () => {
+const DataTableOfSubscription = () => {
   // ** States
   const [Picker, setPicker] = useState("");
   const [searchName, setSearchName] = useState("");
@@ -38,12 +37,15 @@ const DataTableOfUsers = () => {
   const [searchSalary, setSearchSalary] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { data, isLoading } = useFetchUsers();
-  
+  //   const { data, isLoading } = useFetchUsers();
+
   // ** Function to handle Pagination
   const handlePagination = (page) => setCurrentPage(page.selected);
   // ** Function to handle sidebar
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  const { data } = useFetchSubscriptions();
+  console.log("🚀 ~ DataTableOfSubscription ~ data:", data)
 
   // ** Table data to render
   const dataToRender = () => {
@@ -331,28 +333,11 @@ const DataTableOfUsers = () => {
   return (
     <Fragment>
       <Card>
-        <CardHeader className="border-bottom">
-          <CardTitle
-            tag="h4"
-            className="d-flex justify-content-between w-100 align-items-center"
-          >
-            <p>Users List</p>
-            <div>
-              <Button
-                className="add-new-user"
-                color="primary"
-                onClick={toggleSidebar}
-              >
-                Add New User
-              </Button>
-            </div>
-          </CardTitle>
-        </CardHeader>
         <CardBody>
           <Row className="mt-1 mb-50">
             <Col lg="4" md="6" className="mb-1">
               <Label className="form-label" for="name">
-                Name:
+                Amount
               </Label>
               <Input
                 id="name"
@@ -363,7 +348,7 @@ const DataTableOfUsers = () => {
             </Col>
             <Col lg="4" md="6" className="mb-1">
               <Label className="form-label" for="email">
-                Email:
+                Plan:
               </Label>
               <Input
                 type="email"
@@ -375,7 +360,7 @@ const DataTableOfUsers = () => {
             </Col>
             <Col lg="4" md="6" className="mb-1">
               <Label className="form-label" for="post">
-                Role:
+                Expiry:
               </Label>
               <Input
                 id="post"
@@ -434,9 +419,9 @@ const DataTableOfUsers = () => {
           />
         </div>
       </Card>
-      <SidebarNewUsers open={sidebarOpen} toggleSidebar={toggleSidebar} />
+      {/* <SidebarNewUsers open={sidebarOpen} toggleSidebar={toggleSidebar} /> */}
     </Fragment>
   );
 };
 
-export default DataTableOfUsers;
+export default DataTableOfSubscription;
