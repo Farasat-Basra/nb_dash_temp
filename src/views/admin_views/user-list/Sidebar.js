@@ -17,9 +17,10 @@ import { Button, Label, FormText, Form, Input } from "reactstrap";
 
 // ** Store & Actions
 import { addUser } from "../store";
-import { createUser } from "../../../redux/userSlice";
+import { createUser, getAllUsers } from "../../../redux/userSlice";
 import toast, { Toaster } from "react-hot-toast";
 import { useAppDispatch } from "../../../utility/instances";
+import axiosInstance from "../../../utility/axiosInstance";
 
 const defaultValues = {
   firstName: "",
@@ -84,25 +85,43 @@ const SidebarNewUsers = ({ open, toggleSidebar }) => {
     formState: { errors },
   } = useForm({ defaultValues });
 
+  // const userData = () => {
+  //   axiosInstance
+  // }
+
   // ** Function to handle form submit
+  // const onSubmit = (data) => {
+  //   const newData = {
+  //     firstName: data.firstName,
+  //     lastName: data.lastName,
+  //     email: data.email,
+  //     phoneNumber: data.phoneNumber,
+  //     status: "active",
+  //     country: data.country.value,
+  //     city: data.city.value,
+  //     state: data.state.value,
+  //   };
+  //   const response = axiosInstance.post("/admin/create/user", newData);
+  // };
+
   const onSubmit = (data) => {
     console.log("🚀 ~ onSubmit ~ data:", data);
     setData(data);
     if (checkIsValid(data)) {
+      const newData = {
+        ...data,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        status: "active",
+        country: data.country.value,
+        city: data.city.value,
+        state: data.state.value,
+      };
       toggleSidebar();
-      dispatch(
-        addUser({
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-          phoneNumber: data.phoneNumber,
-          status: "active",
-          country: data.country.value,
-          city: data.city.value,
-          state: data.state.value,
-        })
-      );
-      // dispatch(getAllUsers());
+      dispatch(addUser(newData));
+      dispatch(getAllUsers());
     } else {
       for (const key in data) {
         if (data[key] === null) {
@@ -135,7 +154,7 @@ const SidebarNewUsers = ({ open, toggleSidebar }) => {
         lastName: data.lastName,
         email: data.email,
         phoneNumber: data.phoneNumber,
-        role:"user",
+        role: "user",
         status: "active",
         country: data.country.value,
         city: data.city.value,
@@ -294,7 +313,6 @@ const SidebarNewUsers = ({ open, toggleSidebar }) => {
               // <Input id='city' placeholder='Australia' invalid={errors.city && true} {...field} />
               <Select
                 isClearable={false}
-
                 classNamePrefix="select"
                 options={countryOptions}
                 theme={selectThemeColors}
@@ -306,7 +324,6 @@ const SidebarNewUsers = ({ open, toggleSidebar }) => {
             )}
           />
         </div>
-        
 
         <Button type="submit" className="me-1" color="primary">
           Submit
@@ -320,12 +337,3 @@ const SidebarNewUsers = ({ open, toggleSidebar }) => {
 };
 
 export default SidebarNewUsers;
-
-
-
-
-
-
-
-
-

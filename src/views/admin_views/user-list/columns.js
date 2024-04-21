@@ -80,7 +80,7 @@ export const columns = [
     selector: row => row.fullName,
     cell: row => (
       <div className='d-flex justify-content-left align-items-center'>
-        {renderClient(row)}
+        {/* {renderClient(row)} */}
         <div className='d-flex flex-column'>
           <Link
             to={`/apps/user/view/${row.id}`}
