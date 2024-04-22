@@ -13,15 +13,11 @@ import PositionSelector from "./PositionSelector";
 import CreatableSelect from "react-select/creatable";
 import { selectThemeColors } from "@utils";
 import makeAnimated from "react-select/animated";
-import Select, { components } from "react-select"; // eslint-disable-line
 import moment from "moment";
 
-export const Contact = ({ singleLeads: data }) => {
-  const item = data?.lead;
+export const Contact = ({ data }) => {
+  const item = data?.data.lead;
   const animatedComponents = makeAnimated();
-
-  console.log("ssssssssssssssssssss", data);
-
   const tagsArray = [
     { id: 1, label: "Technology", color: "#36A2EB" },
     { id: 2, label: "Business", color: "#FFCE56" },
@@ -51,7 +47,7 @@ export const Contact = ({ singleLeads: data }) => {
             name="name"
             id="nameVertical"
             placeholder="john.doe"
-            value={item?.firstName + " " + item?.lastName}
+            value={item?.firstName + " " + item?.lastName || "name"}
           />
         </Col>
       </Row>
@@ -116,7 +112,7 @@ export const Contact = ({ singleLeads: data }) => {
           >
             Position/ Title
           </Label>
-          <PositionSelector />
+          <PositionSelector data={item?.position} />
         </Col>
       </Row>
       <Row>
@@ -161,7 +157,7 @@ export const Contact = ({ singleLeads: data }) => {
   );
 };
 export const Company = ({ singleLeads: data }) => {
-  const item = data.lead;
+  const item = data?.data.lead;
   return (
     <>
       <div className="d-flex  gap-1 ps-1 ">
@@ -264,7 +260,7 @@ export const Company = ({ singleLeads: data }) => {
   );
 };
 export const Details = ({ singleLeads: data }) => {
-  const item = data.lead;
+  const item = data?.data.lead;
 
   return (
     <>

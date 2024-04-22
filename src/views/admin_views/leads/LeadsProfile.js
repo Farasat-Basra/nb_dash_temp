@@ -6,16 +6,21 @@ import Breadcrumbs from "@components/breadcrumbs";
 import { useQuery } from "react-query";
 import axiosInstance from "../../../utility/axiosInstance";
 import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const LeadsProfile = () => {
   const { LeadsID } = useSelector((store) => store.leadsUser);
-   console.log("LeadsID", LeadsID);
-  const { data } = useQuery("leadsProfile", async () => {
-    const response = axiosInstance.get(`/leads/single/${LeadsID}`);
-    console.log("response", response);
-    return response.data;
+  const { data, isLoading, isError } = useQuery("leadsProfile", async () => {
+    try {
+      const response = await axiosInstance.get(`/leads/${LeadsID}`);
+      console.log("data", response.data);
+      response && toast.success("Data fetched successfully");
+      return response.data;
+    } catch (error) {
+      isError && toast.error("Something went wrong");
+    }
   });
-  console.log("leadsProfile", data);
+
   return (
     <Row col="12">
       <Breadcrumbs
@@ -23,7 +28,7 @@ const LeadsProfile = () => {
         data={[{ title: "Apps" }, { title: "LeadsProfile" }]}
       />
       <Col lg="4" sm="12">
-        <ProfileTabs />
+        <ProfileTabs data={data} />
       </Col>
       <Col lg="8" sm="12">
         <Card className="p-2" style={{ backgroundColor: "#fff" }}>

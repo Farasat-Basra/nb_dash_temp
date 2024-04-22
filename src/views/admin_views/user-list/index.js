@@ -1,5 +1,4 @@
 // ** User List Component
-import Table from "./Table";
 import BreadcrumbsDefault from "../../../adminComponents/breadCrumbs";
 
 // ** Reactstrap Imports
@@ -18,24 +17,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getAllUsers } from "../../../redux/userSlice";
 import { useAppDispatch } from "../../../utility/instances";
-import Breadcrumbs from '@components/breadcrumbs'
+import Breadcrumbs from "@components/breadcrumbs";
 
 const UsersList = () => {
-  // ** instances
   const dispatch = useAppDispatch();
-  // ** Get initial Data
   useEffect(() => {
-   dispatch(getAllUsers());
+    dispatch(getAllUsers());
   }, []);
-
 
   // ** Store states
   const { allUsers } = useSelector((store) => store.users);
 
   return (
     <div className="app-user-list">
-     <Breadcrumbs
-        title="Users List" 
+      <Breadcrumbs
+        title="Users List"
         data={[{ title: "Apps" }, { title: "User List" }]}
       />
       <Row>
@@ -44,7 +40,9 @@ const UsersList = () => {
             color="primary"
             statTitle="Total Users"
             icon={<User size={20} />}
-            renderStats={<h3 className="fw-bolder mb-75"> {allUsers.length || 0 }</h3>}
+            renderStats={
+              <h3 className="fw-bolder mb-75"> {allUsers.length || 0}</h3>
+            }
           />
         </Col>
         <Col lg="3" sm="6">
@@ -73,7 +71,6 @@ const UsersList = () => {
         </Col>
       </Row>
       <DataTableOfUsers />
-      {/* <Table /> */}
     </div>
   );
 };

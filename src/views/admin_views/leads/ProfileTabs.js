@@ -16,17 +16,18 @@ import { Link } from "react-router-dom";
 import { Company, Contact, Details } from "./ProfileTabsContent";
 import { getSingleLeads } from "../../../redux/leadsUser";
 
-const ProfileTabs = () => {
+const ProfileTabs = ({ data }) => {
+  console.log("profielTabdata", data)
   const [active, setActive] = useState("1");
-  const dispatch = useDispatch();
-  const params = useParams();
-  const { singleLeads } = useSelector((store) => store.leadsUser);
+  // const dispatch = useDispatch();
+  // const params = useParams();
+  // const { singleLeads } = useSelector((store) => store.leadsUser);
 
-  useEffect(() => {
-    dispatch(getSingleLeads({ id: params.SingleLeadId }));
-  }, []);
+  // useEffect(() => {
+  //   dispatch(getSingleLeads({ id: params.SingleLeadId }));
+  // }, []);
 
-  console.log(singleLeads);
+  // console.log(singleLeads);
 
   const toggle = (tab) => {
     if (active !== tab) {
@@ -113,13 +114,13 @@ const ProfileTabs = () => {
         </Nav>
         <TabContent className="py-50" activeTab={active}>
           <TabPane tabId="1">
-            <Contact singleLeads={singleLeads} />
+            <Contact data={data} />
           </TabPane>
           <TabPane tabId="2">
-            <Company singleLeads={singleLeads}  />
+            <Company data={data}  />
           </TabPane>
           <TabPane tabId="3">
-            <Details singleLeads={singleLeads} />
+            <Details data={data} />
           </TabPane>
           <TabPane tabId="4">
             <p>

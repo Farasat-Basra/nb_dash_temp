@@ -20,7 +20,7 @@ export default [
             id: "list",
             title: "List",
             icon: <Circle size={12} />,
-            navLink: "/apps/user/list",
+            navLink: "/admin/user/list/:userID",
           },
           {
             id: "view",

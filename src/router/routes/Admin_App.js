@@ -21,8 +21,8 @@ const AdminAppRoutes = [
     element: <Navigate to="/apps/user/view/1" />,
   },
   {
+    path: '/admin/user/list/:userID',
     element: <UsersList />,
-    path: '/apps/user/list'
   },
   {
     path: '/apps/user/view',

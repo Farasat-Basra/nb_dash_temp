@@ -20,7 +20,7 @@ import {
 
 // ** Third Party Components
 import Select from "react-select";
-import { User, Check, X, Archive } from "react-feather";
+import { User, Check, X, Archive, Edit } from "react-feather";
 import { useForm, Controller } from "react-hook-form";
 
 // ** Utils
@@ -30,8 +30,10 @@ import { selectThemeColors } from "@utils";
 import "@styles/react/libs/react-select/_react-select.scss";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useFetchUsers } from "./useFetchUsers";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "../../../utility/axiosInstance";
+import { setUserID } from "../../../redux/userSlice";
+import { Link, useParams } from "react-router-dom";
 
 const statusOptions = [
   { value: "active", label: "Active" },
@@ -66,13 +68,10 @@ const defaultValues = {
   role: "admin",
 };
 
-const EditUser = ({ show, setShow, toggle }) => {
+const EditUser = ({ show, setShow, toggle, id }) => {
   const { userID } = useSelector((state) => state.users);
-  const id = userID;
-  const getTodos = async () => {
-    const response = await axiosInstance.get("/admin/get/single/user/" + id);
-    return response.data;
-  };
+  // const params = useParams();
+  const dispatch = useDispatch();
   // const { data } = useQuery("singleUserData", async () => {
   //   const response = await axiosInstance.get("/admin/get/single/user/" + id);
   //   return response.data;
@@ -84,14 +83,49 @@ const EditUser = ({ show, setShow, toggle }) => {
     control,
     setError,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({ defaultValues });
+
+  const getTodos = async () => {
+    const response = await axiosInstance.get(
+      "/admin/get/single/user/" + userID
+    );
+    // reset({ ...response.data });
+    reset({
+      ...response.data,
+      firstName: response.data?.data.firstName || "",
+      lastName: response.data?.data.lastName || "",
+      email: response.data?.data.email || "",
+      phoneNumber: response.data?.data.phoneNumber || "",
+      role: response.data?.data.role || "",
+      status: response.data?.data.status || "",
+      country: response.data?.data.country || "",
+      state: response.data?.data.state || "",
+    });
+    return response.data;
+  };
 
   const queryClient = useQueryClient();
   const query = useQuery({ queryKey: ["todos"], queryFn: getTodos });
   const postTodo = async (data) => {
+    const newData = {
+      ...data,
+      firstName: data?.firstName,
+      lastName: data?.lastName,
+      email: data?.email,
+      phoneNumber: data?.phoneNumber,
+      role: data?.role,
+      status: data?.status,
+      country: data?.country,
+      state: data?.state,
+    };
     try {
-      const response = await axiosInstance.put("/admin/edit/user/" + id, data);
+      const response = await axiosInstance.put(
+        "/admin/edit/user/" + userID,
+        newData
+      );
+      dispatch(setUserID(null));
       return response.data;
     } catch (error) {
       console.log(error);
@@ -123,9 +157,9 @@ const EditUser = ({ show, setShow, toggle }) => {
 
   return (
     <Fragment>
-      <div className="d-flex align-items-center">
-        <Archive size={14} className="me-50" />
-        <p onClick={toggle}>Edit</p>
+      <div className="d-flex">
+        <Edit size={14} className="me-50" />
+        <span onClick={() => dispatch(setUserID(id))}>Edit</span>
       </div>
       <Modal
         isOpen={show}
@@ -154,13 +188,7 @@ const EditUser = ({ show, setShow, toggle }) => {
                 name="firstName"
                 render={({ field }) => {
                   return (
-                    <Input
-                      {...field}
-                      id="firstName"
-                      placeholder="John"
-                      value={field.value}
-                      invalid={errors.firstName && true}
-                    />
+                    <Input {...field} id="firstName" placeholder="firstName" />
                   );
                 }}
               />
@@ -179,8 +207,8 @@ const EditUser = ({ show, setShow, toggle }) => {
                   <Input
                     {...field}
                     id="lastName"
-                    placeholder="Doe"
-                    invalid={errors.lastName && true}
+                    placeholder="lastName"
+                    // invalid={errors.lastName && true}
                   />
                 )}
               />
@@ -199,8 +227,8 @@ const EditUser = ({ show, setShow, toggle }) => {
                   <Input
                     {...field}
                     id="email"
-                    placeholder="Doe"
-                    invalid={errors.email && true}
+                    placeholder="email"
+                    // invalid={errors.email && true}
                   />
                 )}
               />
@@ -219,8 +247,8 @@ const EditUser = ({ show, setShow, toggle }) => {
                   <Input
                     {...field}
                     id="phoneNumber"
-                    placeholder="Doe"
-                    invalid={errors.phoneNumber && true}
+                    placeholder="phoneNumber"
+                    // invalid={errors.phoneNumber && true}
                   />
                 )}
               />
@@ -239,8 +267,8 @@ const EditUser = ({ show, setShow, toggle }) => {
                   <Input
                     {...field}
                     id="country"
-                    placeholder="Doe"
-                    invalid={errors.country && true}
+                    placeholder="country"
+                    // invalid={errors.country && true}
                   />
                 )}
               />
@@ -259,8 +287,8 @@ const EditUser = ({ show, setShow, toggle }) => {
                   <Input
                     {...field}
                     id="role"
-                    placeholder="Doe"
-                    invalid={errors.role && true}
+                    placeholder="role"
+                    // invalid={errors.role && true}
                   />
                 )}
               />
@@ -279,8 +307,8 @@ const EditUser = ({ show, setShow, toggle }) => {
                   <Input
                     {...field}
                     id="city"
-                    placeholder="Doe"
-                    invalid={errors.city && true}
+                    placeholder="city"
+                    // invalid={errors.city && true}
                   />
                 )}
               />
@@ -314,7 +342,7 @@ const EditUser = ({ show, setShow, toggle }) => {
                 type="submit"
                 className="me-1"
                 color="primary"
-                // onClick={() => setShow(false)}
+                onClick={() => setShow(false)}
               >
                 Submit
               </Button>

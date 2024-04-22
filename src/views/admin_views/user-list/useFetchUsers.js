@@ -12,10 +12,11 @@ import {
 } from "reactstrap";
 import { Archive, FileText, MoreVertical, Trash2 } from "react-feather";
 import { getUser } from "../store";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import EditUser from "./EditUserForm";
 import { useAppDispatch } from "../../../utility/instances";
 import { setUserID } from "../../../redux/userSlice";
+import DeleteUser from "./DeleteModal";
 // ** custom useQuery hook
 export const useFetchUsers = () => {
   return useQuery("usersData", async () => {
@@ -34,8 +35,7 @@ export const useFetchUsers = () => {
       };
     });
     return fetchedData;
-  }
-);
+  });
 };
 
 // ** custom hook with useEffect
@@ -118,47 +118,46 @@ export const advSearchColumns = [
 
 export const ActionsOption = ({ row }) => {
   const [show, setShow] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const toggle = (e) => {
     e.preventDefault();
+    // navigate(`/admin/user/list/${row.id}`);
     setShow(!show);
+  };
+  const DeleteToggleModal = () => {
+    setDeleteModal(!deleteModal);
   };
   return (
     <UncontrolledDropdown>
       <DropdownToggle tag="div" className="btn btn-sm">
-        <MoreVertical
-          size={14}
-          className="cursor-pointer"
-          onClick={() => dispatch(setUserID(row.id))}
-        />
+        <MoreVertical size={14} className="cursor-pointer" />
       </DropdownToggle>
       <DropdownMenu>
-        <DropdownItem
-          tag={Link}
-          className="w-100"
-          to={`/apps/user/view/${row.id}`}
-          onClick={() => store.dispatch(getUser(row.id))}
-        >
+        <DropdownItem tag={Link} className="w-100">
           <FileText size={14} className="me-50" />
           <span className="align-middle">Details</span>
         </DropdownItem>
-        <DropdownItem tag="a" href="/" className="w-100">
+        <DropdownItem className="w-100">
           <div onClick={toggle}>
-            <EditUser setShow={setShow} show={show} />
+            <EditUser setShow={setShow} show={show} id={row.id} />
           </div>
         </DropdownItem>
         <DropdownItem
-          tag="a"
-          href="/"
           className="w-100"
           onClick={(e) => {
             e.preventDefault();
-            store.dispatch(deleteUser(row.id));
           }}
         >
-          <Trash2 size={14} className="me-50" />
-          <span className="align-middle">Delete</span>
+          <div onClick={DeleteToggleModal}>
+            <DeleteUser
+              setShow={setDeleteModal}
+              show={deleteModal}
+              id={row.id}
+            />
+          </div>
         </DropdownItem>
       </DropdownMenu>
     </UncontrolledDropdown>
