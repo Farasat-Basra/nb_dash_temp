@@ -18,16 +18,10 @@ import { useEffect } from "react";
 import { getAllUsers } from "../../../redux/userSlice";
 import { useAppDispatch } from "../../../utility/instances";
 import Breadcrumbs from "@components/breadcrumbs";
+import { useFetchUsers } from "./useFetchUsers";
 
 const UsersList = () => {
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(getAllUsers());
-  }, []);
-
-  // ** Store states
-  const { allUsers } = useSelector((store) => store.users);
-
+  const { data } = useFetchUsers();
   return (
     <div className="app-user-list">
       <Breadcrumbs
@@ -41,7 +35,7 @@ const UsersList = () => {
             statTitle="Total Users"
             icon={<User size={20} />}
             renderStats={
-              <h3 className="fw-bolder mb-75"> {allUsers.length || 0}</h3>
+              <h3 className="fw-bolder mb-75"> {data?.length || 0}</h3>
             }
           />
         </Col>

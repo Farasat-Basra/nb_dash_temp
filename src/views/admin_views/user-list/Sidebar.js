@@ -21,6 +21,8 @@ import { createUser, getAllUsers } from "../../../redux/userSlice";
 import toast, { Toaster } from "react-hot-toast";
 import { useAppDispatch } from "../../../utility/instances";
 import axiosInstance from "../../../utility/axiosInstance";
+import { useMutation, useQueryClient } from "react-query";
+import { endpoint } from "./useFetchUsers";
 
 const defaultValues = {
   firstName: "",
@@ -61,12 +63,6 @@ const countryOptions = [
   { label: "United States", value: "United States" },
 ];
 
-const checkIsValid = (data) => {
-  return Object.values(data).every((field) =>
-    typeof field === "object" ? field !== null : field.length > 0
-  );
-};
-
 const SidebarNewUsers = ({ open, toggleSidebar }) => {
   // ** States
   const [data, setData] = useState(null);
@@ -85,57 +81,38 @@ const SidebarNewUsers = ({ open, toggleSidebar }) => {
     formState: { errors },
   } = useForm({ defaultValues });
 
-  // const userData = () => {
-  //   axiosInstance
-  // }
+  const queryClient = useQueryClient();
+  const postTodo = async (data) => {
+    const newData = {
+      ...data,
+      firstName: data?.firstName,
+      lastName: data?.lastName,
+      email: data?.email,
+      phoneNumber: data?.phoneNumber,
+      status: "active",
+      country: data?.country.value,
+      city: data?.city.value,
+      state: data?.state.value,
+    };
+    try {
+      const response = await axiosInstance.post("/admin/create/user", newData);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const { mutate } = useMutation({
+    mutationFn: postTodo,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: endpoint });
+      toast.success("User created successfully");
+    },
+  });
 
   // ** Function to handle form submit
-  // const onSubmit = (data) => {
-  //   const newData = {
-  //     firstName: data.firstName,
-  //     lastName: data.lastName,
-  //     email: data.email,
-  //     phoneNumber: data.phoneNumber,
-  //     status: "active",
-  //     country: data.country.value,
-  //     city: data.city.value,
-  //     state: data.state.value,
-  //   };
-  //   const response = axiosInstance.post("/admin/create/user", newData);
-  // };
-
   const onSubmit = (data) => {
-    console.log("🚀 ~ onSubmit ~ data:", data);
-    setData(data);
-    if (checkIsValid(data)) {
-      const newData = {
-        ...data,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        phoneNumber: data.phoneNumber,
-        status: "active",
-        country: data.country.value,
-        city: data.city.value,
-        state: data.state.value,
-      };
-      toggleSidebar();
-      dispatch(addUser(newData));
-      dispatch(getAllUsers());
-    } else {
-      for (const key in data) {
-        if (data[key] === null) {
-          setError("country", {
-            type: "manual",
-          });
-        }
-        if (data[key] !== null && data[key].length === 0) {
-          setError(key, {
-            type: "manual",
-          });
-        }
-      }
-    }
+    mutate(data);
   };
 
   const handleSidebarClosed = () => {
@@ -145,29 +122,6 @@ const SidebarNewUsers = ({ open, toggleSidebar }) => {
     setRole("subscriber");
     setPlan("basic");
   };
-
-  async function handleUserFormData(data) {
-    try {
-      const newData = {
-        // ...data,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        phoneNumber: data.phoneNumber,
-        role: "user",
-        status: "active",
-        country: data.country.value,
-        city: data.city.value,
-        state: data.state.value,
-        dob: "",
-      };
-      const res = await dispatch(createUser(newData)).unwrap();
-      toast.success(res.message);
-    } catch (error) {
-      toast.error(error);
-    }
-  }
-
   return (
     <Sidebar
       size="lg"
@@ -183,7 +137,7 @@ const SidebarNewUsers = ({ open, toggleSidebar }) => {
         Add a new user
       </h3>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        {console.log("eee", errors)}
+        {console.log("fromError", errors)}
         <Toaster title={errors} />
         <div className="mb-1">
           <Label className="form-label" for="firstName">

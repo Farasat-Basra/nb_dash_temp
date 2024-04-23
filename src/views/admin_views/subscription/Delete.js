@@ -7,29 +7,26 @@ import { Button, Modal, ModalBody, ModalHeader, Spinner } from "reactstrap";
 // ** Styles
 import "@styles/react/libs/react-select/_react-select.scss";
 import { setUserID } from "../../../redux/userSlice";
-import { useSelector } from "react-redux";
 import { Trash2 } from "react-feather";
 import { useAppDispatch } from "../../../utility/instances";
-import { use } from "i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import toast from "react-hot-toast";
 import axiosInstance from "../../../utility/axiosInstance";
-import { endpoint } from "./useFetchUsers";
+import { endpoint } from "./data";
 
-const DeleteUser = ({ show, setShow, toggle, id }) => {
+const DeleteSubscription = ({ show, setShow, toggle, id }) => {
   console.log("id", id);
-  const { userID } = useSelector((state) => state.users);
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   // fetcher
   const deletePost = async () => {
-    const response = await axiosInstance.delete(`/admin/delete/user/${id}`);
+    const response = await axiosInstance.delete(`/admin/delete/subscription/plan/${id}`);
     return response.data;
   };
   const { mutate, isLoading, isError } = useMutation(deletePost, {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: endpoint });
-      toast.success("User deleted successfully");
+      toast.success("Subscription deleted successfully");
       setShow(!show);
     },
     onError: () => {
@@ -45,7 +42,7 @@ const DeleteUser = ({ show, setShow, toggle, id }) => {
     <Fragment>
       <div className="d-flex">
         <Trash2 size={14} className="me-50" />
-        <span onClick={() => dispatch(setUserID(id))} className="align-middle">
+        <span  className="align-middle">
           Delete
         </span>
       </div>
@@ -85,4 +82,4 @@ const DeleteUser = ({ show, setShow, toggle, id }) => {
   );
 };
 
-export default DeleteUser;
+export default DeleteSubscription;

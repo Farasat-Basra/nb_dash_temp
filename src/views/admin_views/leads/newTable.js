@@ -110,7 +110,6 @@ const DataTableOfLeads = () => {
     setSearchName(value);
     if (value.length) {
       updatedData = dataToFilter().filter((item) => {
-        console.log("item", item)
         const startsWith = item.fullName
           .toLowerCase()
           .startsWith(value.toLowerCase());

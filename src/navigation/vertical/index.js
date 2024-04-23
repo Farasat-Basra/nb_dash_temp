@@ -17,7 +17,7 @@ export default [
 //   ...pages,
   // ...uiElements,
 //   ...forms,
-  ...tables,
+  // ...tables,
 //   ...charts,
   ...others,
 ];

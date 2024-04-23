@@ -1,35 +1,101 @@
-import { Badge, Col, Input, Label, Row } from "reactstrap";
+import { Badge, Button, Col, Input, Label, Row, Spinner } from "reactstrap";
 import {
   EmailVerifiedChecked,
-  LeftArrow,
-  NextIcon,
-  PreviousIcon,
 } from "../../../utility/Svgs";
-import { useState } from "react";
-import IndustrySelector from "./IndustrySelector";
-import EmployeesSelector from "./EmployeesSelector";
-import CountrySelector from "./CountrySelector";
-import PositionSelector from "./PositionSelector";
+import { useEffect, useState } from "react";
 import CreatableSelect from "react-select/creatable";
 import { selectThemeColors } from "@utils";
 import makeAnimated from "react-select/animated";
+import Select, { components } from "react-select"; // eslint-disable-line
 import moment from "moment";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import axiosInstance from "../../../utility/axiosInstance";
+import { getAllLeads } from "../../../redux/leadsUser";
 
-export const Contact = ({ data }) => {
-  const item = data?.data.lead;
+export const Contact = ({ singleLeads: data }) => {
+  const [spinner, setSpinner] = useState(false);
+  const dispatch = useDispatch();
+  const item = data?.lead;
   const animatedComponents = makeAnimated();
   const tagsArray = [
-    { id: 1, label: "Technology", color: "#36A2EB" },
-    { id: 2, label: "Business", color: "#FFCE56" },
-    { id: 3, label: "Health", color: "#FF6384" },
-    { id: 4, label: "Travel", color: "#4BC0C0" },
-    { id: 5, label: "Food", color: "#FF9F40" },
-    { id: 6, label: "Science", color: "#9966FF" },
-    { id: 7, label: "Art", color: "#FFD700" },
-    { id: 8, label: "Sports", color: "#2E8B57" },
-    { id: 9, label: "Fashion", color: "#FF69B4" },
-    { id: 10, label: "Education", color: "#7B68EE" },
+    { value: "Technology", label: "Technology" },
+    { value: "Business", label: "Business" },
+    { value: "Health", label: "Health" },
+    { value: "Travel", label: "Travel" },
+    { value: "Food", label: "Food" },
+    { value: "Science", label: "Science" },
+    { value: "Art", label: "Art" },
+    { value: "Sports", label: "Sports" },
+    { value: "Fashion", label: "Fashion" },
+    { value: "Education", label: "Education" },
   ];
+
+  const { control, handleSubmit, reset } = useForm();
+
+  useEffect(() => {
+    if (data) {
+      reset({
+        firstName: item?.firstName,
+        lastName: item?.lastName,
+        email: item?.email,
+        // position: item?.position,
+        tags: item?.tags.map((item) => {
+          return { value: item.name, label: item.name };
+        }),
+      });
+    }
+  }, [data]);
+
+  const onSubmit = async (data) => {
+    const newData = {
+      ...data,
+      firstName: data?.firstName,
+      lastName: data?.lastName,
+      email: data?.email,
+      position: data?.position,
+      tags: data?.tags.map((item) => {
+        return item.value;
+      }),
+    };
+    try {
+      const response = await axiosInstance.put(
+        `/leads/update/${item?._id}`,
+        newData
+      );
+      setSpinner(false);
+      console.log(response);
+      dispatch(getAllLeads());
+      toast.success("Lead updated successfully");
+    } catch (error) {
+      toast.error(error);
+      console.log(error);
+    }
+  };
+  const iconOptions = [
+    {
+      options: [
+        { label: "Software Engineer", value: "software_engineer" },
+        { label: "Graphic Designer", value: "graphic_designer" },
+        { label: "Teacher", value: "teacher" },
+        { label: "Medical Doctor", value: "medical_doctor" },
+        { label: "Marketing Specialist", value: "marketing_specialist" },
+      ],
+    },
+  ];
+
+  const OptionComponent = ({ data, ...props }) => {
+    const Icon = data.icon;
+
+    return (
+      <components.Option {...props}>
+        {/* <Icon className="me-50" size={14} /> */}
+        {data.label}
+      </components.Option>
+    );
+  };
 
   return (
     <>
@@ -37,127 +103,223 @@ export const Contact = ({ data }) => {
         <Input type="checkbox" />
         <p>Hide empty fields</p>
       </div>
-      <Row>
-        <Col sm="12" className="mb-1">
-          <Label className="form-label" for="nameVertical">
-            Full NAme
-          </Label>
-          <Input
-            type="text"
-            name="name"
-            id="nameVertical"
-            placeholder="john.doe"
-            value={item?.firstName + " " + item?.lastName || "name"}
-          />
-        </Col>
-      </Row>
-      <Row className="d-flex ">
-        <Col className="">
-          <div sm="12" className="mb-1">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {/* <Row>
+          <Col sm="12" className="mb-1">
             <Label className="form-label" for="nameVertical">
-              First Name
+              Full NAme
             </Label>
-            <Input
-              type="text"
-              name="name"
-              id="nameVertical"
-              // placeholder="john.doe"
-              value={item?.firstName || "name"}
+            <Controller
+              name="fullName"
+              control={control}
+              value={item?.firstName + " " + item?.lastName}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  type="text"
+                  name="fullName"
+                  id="nameVertical"
+                />
+              )}
             />
-          </div>
-        </Col>
-        <Col>
-          <div sm="12" className="mb-1">
-            <Label className="form-label" for="nameVertical">
-              Last Name
-            </Label>
-            <Input
-              type="text"
-              name="name"
-              id="nameVertical"
-              // placeholder="john.doe"
-              value={item?.lastName || "name"}
-            />
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <div className="mb-1">
+          </Col>
+        </Row> */}
+        <Row className="d-flex ">
+          <Col className="">
+            <div sm="12" className="mb-1">
+              <Label className="form-label" for="nameVertical">
+                First Name
+              </Label>
+              <Controller
+                name="firstName"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="text"
+                    name="firstName"
+                    placeholder="name"
+                    id="nameVertical"
+                  />
+                )}
+              />
+            </div>
+          </Col>
+          <Col>
+            <div sm="12" className="mb-1">
+              <Label className="form-label" for="nameVertical">
+                Last Name
+              </Label>
+              <Controller
+                name="lastName"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="text"
+                    name="lastName"
+                    id="nameVertical"
+                    placeholder="name"
+                    // placeholder="john.doe"
+                  />
+                )}
+              />
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <div className="mb-1">
+              <Label
+                className="form-label d-flex align-items-center "
+                for="nameVertical"
+              >
+                Email
+                <span style={{ paddingLeft: "5px" }}>
+                  <EmailVerifiedChecked />
+                </span>
+              </Label>
+              <Controller
+                name="email"
+                control={control}
+                placeholder="email"
+                render={({ field }) => (
+                  <Input {...field} type="text" name="name" id="nameVertical" />
+                )}
+              />
+            </div>
+          </Col>
+        </Row>
+        <Row></Row>
+        <Row>
+          <Col className="mb-1">
             <Label
               className="form-label d-flex align-items-center "
               for="nameVertical"
             >
-              Email
-              <span style={{ paddingLeft: "5px" }}>
-                <EmailVerifiedChecked />
-              </span>
+              Position/ Title
             </Label>
-            <Input
-              type="text"
-              name="name"
-              id="nameVertical"
-              // placeholder="john.doe"
-              value={item?.email || "email"}
+            <Controller
+              name="position"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  options={iconOptions}
+                  className="react-select"
+                  classNamePrefix="Select Folder (optional)"
+                  placeholder="Software Engineer"
+                  components={{
+                    Option: OptionComponent,
+                  }}
+                />
+              )}
             />
-          </div>
-        </Col>
-      </Row>
-      <Row></Row>
-      <Row>
-        <Col className="mb-1">
-          <Label
-            className="form-label d-flex align-items-center "
-            for="nameVertical"
-          >
-            Position/ Title
-          </Label>
-          <PositionSelector data={item?.position} />
-        </Col>
-      </Row>
-      <Row>
-        <Col className="mb-1">
-          <Label
-            className="form-label d-flex align-items-center "
-            for="nameVertical"
-          >
-            Contact Address
-          </Label>
-          <Input
-            type="text"
-            name="name"
-            id="nameVertical"
-            // placeholder="john.doe"
-            value={item?.address || "Address"}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col className="mb-5">
-          <Label
-            className="form-label d-flex align-items-center "
-            for="nameVertical"
-          >
-            Tags
-          </Label>
-          <CreatableSelect
-            isMulti
-            isClearable={true}
-            theme={selectThemeColors}
-            closeMenuOnSelect={false}
-            components={animatedComponents}
-            defaultValue={[tagsArray[4], tagsArray[5]]}
-            options={tagsArray}
-            className="react-select"
-            classNamePrefix="select"
-          />
-        </Col>
-      </Row>
+          </Col>
+        </Row>
+        <Row>
+          <Col className="mb-1">
+            <Label
+              className="form-label d-flex align-items-center "
+              for="nameVertical"
+            >
+              Contact Address
+            </Label>
+            <Controller
+              name="address"
+              control={control}
+              render={({ field }) => (
+                <Input {...field} type="text" name="name" id="nameVertical" />
+              )}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col className="mb-5">
+            <Label
+              className="form-label d-flex align-items-center "
+              for="nameVertical"
+            >
+              Tags
+            </Label>
+            <Controller
+              name="tags"
+              control={control}
+              render={({ field }) => (
+                <CreatableSelect
+                  {...field}
+                  isMulti
+                  value={field.value}
+                  isClearable={true}
+                  theme={selectThemeColors}
+                  closeMenuOnSelect={false}
+                  components={animatedComponents}
+                  options={tagsArray}
+                  className="react-select"
+                  classNamePrefix="select"
+                />
+              )}
+            />
+          </Col>
+        </Row>
+        <Button color="primary" type="submit" onClick={() => setSpinner(true)}>
+          {spinner ? <Spinner color="light" /> : "Update"}
+        </Button>
+      </form>
     </>
   );
 };
+
 export const Company = ({ singleLeads: data }) => {
-  const item = data?.data.lead;
+  const item = data.lead;
+  console.log("🚀 ~ Company ~ item:", item)
+  const { control, handleSubmit, reset } = useForm();
+  const resetData = () => {
+    reset({
+      companyName: item?.company?.name,
+      website: item?.company?.website,
+      industry: item?.company?.industry,
+      companySize: item?.company?.size,
+      noOfemployee: item?.company?.employees,
+      businessAddress: item?.company?.address,
+      city: item?.company?.city,
+      state: item?.company?.state,
+      country: item?.company?.country,
+    });
+  };
+
+  useEffect(
+    (item) => {
+      if (item) resetData();
+    },
+    [item]
+  );
+
+  const onSubmit = () => {};
+  const iconOptions = [
+    {
+      options: [
+        {
+          value: "it",
+          label: "Information Technologies",
+        },
+        {
+          value: "webDevelopment",
+          label: "Web Development",
+        },
+      ],
+    },
+  ];
+  const OptionComponent = ({ data, ...props }) => {
+    const Icon = data.icon;
+  
+    return (
+      <components.Option {...props}>
+        {/* <Icon className="me-50" size={14} /> */}
+        {data.label}
+      </components.Option>
+    );
+  };
   return (
     <>
       <div className="d-flex  gap-1 ps-1 ">
@@ -169,12 +331,18 @@ export const Company = ({ singleLeads: data }) => {
           <Label className="form-label" for="nameVertical">
             Company NAme
           </Label>
-          <Input
-            type="text"
+          <Controller
             name="name"
-            id="nameVertical"
-            // placeholder="company"
-            value={item?.companyName || "company"}
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="text"
+                name="name"
+                id="nameVertical"
+                placeholder="name"
+              />
+            )}
           />
         </Col>
       </Row>
@@ -183,11 +351,18 @@ export const Company = ({ singleLeads: data }) => {
           <Label className="form-label" for="nameVertical">
             Company Website
           </Label>
-          <Input
-            type="text"
-            name="name"
-            id="nameVertical"
-            placeholder="https://abc.com"
+          <Controller
+            name="website"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="text"
+                name="name"
+                id="nameVertical"
+                placeholder="https://abc.com"
+              />
+            )}
           />
         </Col>
       </Row>
@@ -196,7 +371,22 @@ export const Company = ({ singleLeads: data }) => {
           <Label className="form-label" for="nameVertical">
             Industry
           </Label>
-          <IndustrySelector />
+          <Controller
+            name="industry"
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field}
+                options={iconOptions}
+                className="react-select"
+                classNamePrefix="Select Folder (optional)"
+                placeholder="IT "
+                components={{
+                  Option: OptionComponent,
+                }}
+              />
+            )}
+          />
         </Col>
       </Row>
       <Row>
@@ -204,7 +394,22 @@ export const Company = ({ singleLeads: data }) => {
           <Label className="form-label" for="nameVertical">
             # of Employees
           </Label>
-          <EmployeesSelector />
+          <Controller
+            name="noOfemployee"
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field}
+                options={iconOptions}
+                className="react-select"
+                classNamePrefix="Select Folder (optional)"
+                placeholder="0-10"
+                components={{
+                  Option: OptionComponent,
+                }}
+              />
+            )}
+          />
         </Col>
       </Row>
       <Row>
@@ -212,11 +417,17 @@ export const Company = ({ singleLeads: data }) => {
           <Label className="form-label" for="nameVertical">
             Business Address
           </Label>
-          <Input
-            type="text"
-            name="name"
-            id="nameVertical"
-            placeholder="Dubai,UAE"
+          <Controller
+            name="businessAddress"
+            control={control}
+            render={({ field }) => (
+              <Input
+                type="text"
+                name="businessAddress"
+                id="nameVertical"
+                placeholder="Dubai,UAE"
+              />
+            )}
           />
         </Col>
       </Row>
@@ -226,11 +437,17 @@ export const Company = ({ singleLeads: data }) => {
             <Label className="form-label" for="nameVertical">
               City
             </Label>
-            <Input
-              type="text"
-              name="name"
-              id="nameVertical"
-              placeholder="Dubai"
+            <Controller
+              name="city"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  type="text"
+                  name="name"
+                  id="nameVertical"
+                  placeholder="Dubai"
+                />
+              )}
             />
           </div>
         </Col>
@@ -239,11 +456,17 @@ export const Company = ({ singleLeads: data }) => {
             <Label className="form-label" for="nameVertical">
               State
             </Label>
-            <Input
-              type="text"
-              name="name"
-              id="nameVertical"
-              placeholder="Dubai"
+            <Controller
+              name="state"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  type="text"
+                  name="name"
+                  id="nameVertical"
+                  placeholder="Dubai"
+                />
+              )}
             />
           </div>
         </Col>
@@ -253,14 +476,26 @@ export const Company = ({ singleLeads: data }) => {
           <Label className="form-label" for="nameVertical">
             Country
           </Label>
-          <CountrySelector />
+
+          <Controller
+            name="country"
+            control={control}
+            render={({ field }) => (
+              <Input
+                type="text"
+                name="name"
+                id="nameVertical"
+                placeholder="country"
+              />
+            )}
+          />
         </Col>
       </Row>
     </>
   );
 };
 export const Details = ({ singleLeads: data }) => {
-  const item = data?.data.lead;
+  const item = data.lead;
 
   return (
     <>

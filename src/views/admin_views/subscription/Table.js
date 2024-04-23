@@ -45,7 +45,7 @@ const DataTableOfSubscription = () => {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   const { data } = useFetchSubscriptions();
-  console.log("🚀 ~ DataTableOfSubscription ~ data:", data)
+  // console.log("🚀 ~ DataTableOfSubscription ~ data:", data)
 
   // ** Table data to render
   const dataToRender = () => {
@@ -110,11 +110,11 @@ const DataTableOfSubscription = () => {
     setSearchName(value);
     if (value.length) {
       updatedData = dataToFilter().filter((item) => {
-        const startsWith = item.full_name
+        const startsWith = item.name
           .toLowerCase()
           .startsWith(value.toLowerCase());
 
-        const includes = item.full_name
+        const includes = item.name
           .toLowerCase()
           .includes(value.toLowerCase());
 
@@ -337,7 +337,7 @@ const DataTableOfSubscription = () => {
           <Row className="mt-1 mb-50">
             <Col lg="4" md="6" className="mb-1">
               <Label className="form-label" for="name">
-                Amount
+                Name
               </Label>
               <Input
                 id="name"

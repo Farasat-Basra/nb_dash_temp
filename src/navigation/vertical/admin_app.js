@@ -22,18 +22,18 @@ export default [
             icon: <Circle size={12} />,
             navLink: "/admin/user/list/:userID",
           },
-          {
-            id: "view",
-            title: "View",
-            icon: <Circle size={12} />,
-            navLink: "/apps/user/view",
-          },
+          // {
+          //   id: "view",
+          //   title: "View",
+          //   icon: <Circle size={12} />,
+          //   navLink: "/admin/user/view/:user_id",
+          // },
         ],
       },
       {
         id: "subscription",
         title: "Subscription",
         icon: <MdOutlineSubscriptions size={20} />,
-        navLink: "/apps/subscription",
+        navLink: "/apps/subscription/:subscriptionID",
       },
 ]

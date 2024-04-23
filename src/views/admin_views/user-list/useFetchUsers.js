@@ -1,72 +1,54 @@
 import { useQuery } from "react-query";
 import axiosInstance from "../../../utility/axiosInstance";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 // ** Reactstrap Imports
 import {
-  Badge,
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
 } from "reactstrap";
-import { Archive, FileText, MoreVertical, Trash2 } from "react-feather";
-import { getUser } from "../store";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { FileText, MoreVertical, Trash2 } from "react-feather";
+import { Link, useNavigate } from "react-router-dom";
 import EditUser from "./EditUserForm";
-import { useAppDispatch } from "../../../utility/instances";
-import { setUserID } from "../../../redux/userSlice";
 import DeleteUser from "./DeleteModal";
+import toast from "react-hot-toast";
+import { error } from "jquery";
 // ** custom useQuery hook
+export const endpoint = "/admin/get/all/users";
+
 export const useFetchUsers = () => {
-  return useQuery("usersData", async () => {
-    const response = await axiosInstance.get("/admin/get/all/users");
-    const fetchedData = response.data.data.map((item) => {
-      let firstName = item?.firstName ?? "N/A";
-      let lastName = item?.lastName ?? " ";
-      return {
-        fullName: firstName + " " + lastName,
-        id: item._id || "N/A",
-        email: item?.email || "N/A",
-        role: item?.role,
-        phoneNumber: item?.phoneNumber || "N/A",
-        country: item?.country || "N/A",
-        state: item?.state || "N/A",
-      };
-    });
-    return fetchedData;
-  });
+  const navigate = useNavigate();
+  return useQuery(
+    endpoint,
+    async () => {
+      const response = await axiosInstance.get(endpoint);
+      const fetchedData = response.data.data.map((item) => {
+        let firstName = item?.firstName ?? "N/A";
+        let lastName = item?.lastName ?? " ";
+        return {
+          fullName: firstName + " " + lastName,
+          id: item._id || "N/A",
+          email: item?.email || "N/A",
+          role: item?.role,
+          phoneNumber: item?.phoneNumber || "N/A",
+          country: item?.country || "N/A",
+          state: item?.state || "N/A",
+        };
+      });
+      return fetchedData;
+    },
+    {
+      onError: (error) => {
+        if (error.response.data.message === "Invalid user! Login again!") {
+          navigate("/login");
+        }
+        toast.error(error.response.data.message);
+      },
+    }
+  );
 };
-
-// ** custom hook with useEffect
-// export function useFetchUsers() {
-//   const [data, setData] = useState([]);
-//   const dispatch = useAppDispatch();
-
-//   const FetchData = async () => {
-//     const response = await axiosInstance.get("/admin/get/all/users");
-//     const fetchedData = response.data.data.map((item) => {
-//       let firstName = item?.firstName ?? "N/A";
-//       let lastName = item?.lastName ?? " ";
-//       return {
-//         fullName: firstName + " " + lastName,
-//         id: item._id || "N/A",
-//         email: item?.email || "N/A",
-//         role: item?.role,
-//         phoneNumber: item?.phoneNumber || "N/A",
-//         country: item?.country || "N/A",
-//         state: item?.state || "N/A",
-//       };
-//     });
-//     setData(fetchedData);
-//   };
-//   useEffect(() => {
-//     FetchData();
-//   }, []);
-//   return data;
-// }
-
-// ** user Table Data
 export const advSearchColumns = [
   {
     name: "Name",
@@ -119,12 +101,9 @@ export const advSearchColumns = [
 export const ActionsOption = ({ row }) => {
   const [show, setShow] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
   const toggle = (e) => {
     e.preventDefault();
-    // navigate(`/admin/user/list/${row.id}`);
     setShow(!show);
   };
   const DeleteToggleModal = () => {
@@ -136,7 +115,7 @@ export const ActionsOption = ({ row }) => {
         <MoreVertical size={14} className="cursor-pointer" />
       </DropdownToggle>
       <DropdownMenu>
-        <DropdownItem tag={Link} className="w-100">
+        <DropdownItem tag={Link} className="w-100" to={`/admin/user/view/${row.id}`} >
           <FileText size={14} className="me-50" />
           <span className="align-middle">Details</span>
         </DropdownItem>

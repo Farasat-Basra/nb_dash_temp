@@ -108,11 +108,11 @@ const DataTableOfUsers = () => {
     setSearchName(value);
     if (value.length) {
       updatedData = dataToFilter().filter((item) => {
-        const startsWith = item.full_name
+        const startsWith = item.fullName
           .toLowerCase()
           .startsWith(value.toLowerCase());
 
-        const includes = item.full_name
+        const includes = item.fullName
           .toLowerCase()
           .includes(value.toLowerCase());
 

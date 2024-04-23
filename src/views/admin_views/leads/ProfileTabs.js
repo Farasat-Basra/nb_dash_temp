@@ -10,24 +10,39 @@ import {
   Col,
 } from "reactstrap";
 import { LeftArrow, NextIcon, PreviousIcon, RightArrow } from "../../../utility/Svgs";
+import { Company, Contact, Details } from "./ProfileTabsContent";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Company, Contact, Details } from "./ProfileTabsContent";
+import toast from "react-hot-toast";
 import { getSingleLeads } from "../../../redux/leadsUser";
 
-const ProfileTabs = ({ data }) => {
-  console.log("profielTabdata", data)
+const ProfileTabs = () => {
   const [active, setActive] = useState("1");
-  // const dispatch = useDispatch();
-  // const params = useParams();
-  // const { singleLeads } = useSelector((store) => store.leadsUser);
+  // const [leadData, setLeadData] = useState(null);
+  const dispatch = useDispatch();
+  const params = useParams();
+  const { singleLeads } = useSelector((store) => store.leadsUser);
+  const fetchingLeadsProfileData = async () => {
+    try {
+      const res = await dispatch(
+        getSingleLeads({ id: params?.leads_id })
+      ).unwrap();
+      if (res === 200) {
+        toast.success("Data fetched successfully");
+      }
+      params?.SingleLeadId === "null";
+      return res;
+    } catch (error) {
+      toast.error(error);
+    }
+  };
 
-  // useEffect(() => {
-  //   dispatch(getSingleLeads({ id: params.SingleLeadId }));
-  // }, []);
+  useEffect(() => {
+    fetchingLeadsProfileData();
+  }, []);
 
-  // console.log(singleLeads);
+  // console.log("singleLeads", singleLeads);
 
   const toggle = (tab) => {
     if (active !== tab) {
@@ -41,8 +56,8 @@ const ProfileTabs = ({ data }) => {
         <Row className="d-flex justify-content-between ">
           <Col sm="12" lg="6">
             <div className="d-flex gap-1 align-items-center">
-              <Link to="/apps/lead">
-              <LeftArrow />
+              <Link to="/apps/leads">
+                <LeftArrow />
               </Link>
               <span className="fs-5 ">List Number 10</span>
             </div>
@@ -114,13 +129,13 @@ const ProfileTabs = ({ data }) => {
         </Nav>
         <TabContent className="py-50" activeTab={active}>
           <TabPane tabId="1">
-            <Contact data={data} />
+            <Contact singleLeads={singleLeads} />
           </TabPane>
           <TabPane tabId="2">
-            <Company data={data}  />
+            <Company singleLeads={singleLeads} />
           </TabPane>
           <TabPane tabId="3">
-            <Details data={data} />
+            <Details singleLeads={singleLeads} />
           </TabPane>
           <TabPane tabId="4">
             <p>

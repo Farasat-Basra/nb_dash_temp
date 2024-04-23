@@ -29,7 +29,7 @@ import { selectThemeColors } from "@utils";
 // ** Styles
 import "@styles/react/libs/react-select/_react-select.scss";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useFetchUsers } from "./useFetchUsers";
+import { endpoint, useFetchUsers } from "./useFetchUsers";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "../../../utility/axiosInstance";
 import { setUserID } from "../../../redux/userSlice";
@@ -91,7 +91,6 @@ const EditUser = ({ show, setShow, toggle, id }) => {
     const response = await axiosInstance.get(
       "/admin/get/single/user/" + userID
     );
-    // reset({ ...response.data });
     reset({
       ...response.data,
       firstName: response.data?.data.firstName || "",
@@ -135,7 +134,7 @@ const EditUser = ({ show, setShow, toggle, id }) => {
     mutationFn: postTodo,
     onSuccess: () => {
       // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
+      queryClient.invalidateQueries({ queryKey: [endpoint] });
     },
   });
 

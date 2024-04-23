@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 // ** Reactstrap Imports
 import {
@@ -21,7 +21,7 @@ import {
 
 // ** Third Party Components
 import Select from "react-select";
-import { User, Check, X } from "react-feather";
+import { User, Check, X, Edit } from "react-feather";
 import { useForm, Controller } from "react-hook-form";
 
 // ** Utils
@@ -29,7 +29,12 @@ import { selectThemeColors } from "@utils";
 
 // ** Styles
 import "@styles/react/libs/react-select/_react-select.scss";
-import { QueryClient, useMutation, useQueryClient } from "react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "react-query";
 import toast from "react-hot-toast";
 import { endpoint } from "./data";
 import axiosInstance from "../../../utility/axiosInstance";
@@ -46,28 +51,46 @@ const defaultValues = {
   username: "bob.dev",
 };
 
-const AddSubscription = () => {
+const EditSubscription = ({ id, setShow, show, toggle }) => {
   // ** States
-  const [show, setShow] = useState(false);
+  //   const [show, setShow] = useState(false);
   const queryClient = useQueryClient();
-  // ** Hooks
   const {
     control,
     setError,
+    reset,
     handleSubmit,
     formState: { errors },
-  } = useForm({ defaultValues });
+  } = useForm({});
+
+  const getTodos = async () => {
+    const response = await axiosInstance.get(
+      `/admin/get/single/subscription/plan/${id}`
+    );
+    console.log("🚀 ~ getTodos ~ response:", response)
+    const item = response.data.data;
+    reset({
+      name: item.name,
+      amount: Number(item.amount),
+      status: item.status.value,
+    });
+    return response.data;
+  };
+  const query = useQuery({ queryKey: ["todos"], queryFn: getTodos });
+
+  // ** Hooks
 
   const postSubscription = async (data) => {
+    // console.log("status", data.status)
     const newData = {
       ...data,
       name: data.name,
       amount: Number(data.amount),
-      status: data.status.value,
+      // status: data.status.value,
     };
     try {
-      const response = await axiosInstance.post(
-        "/admin/create/subscription/plan",
+      const response = await axiosInstance.put(
+        "/admin/edit/subscription/plan/" + id,
         newData
       );
       return response.data;
@@ -93,12 +116,13 @@ const AddSubscription = () => {
 
   return (
     <Fragment>
-      <Button color="primary" onClick={() => setShow(true)}>
-        Add Subscription
-      </Button>
+      <div className="d-flex" onClick={() => setShow(true)}>
+        <Edit size={14} className="me-50" />
+        <span className="align-middle">Edit</span>
+      </div>
       <Modal
         isOpen={show}
-        toggle={() => setShow(!show)}
+        toggle={toggle}
         className="modal-dialog-centered modal-lg"
       >
         <ModalHeader
@@ -107,7 +131,7 @@ const AddSubscription = () => {
         ></ModalHeader>
         <ModalBody className="px-sm-5 mx-50 pb-5">
           <div className="text-center mb-2">
-            <h1 className="mb-1">Add New Subscription</h1>
+            <h1 className="mb-1"> Edit Subscription</h1>
           </div>
           <Row
             tag="form"
@@ -191,7 +215,7 @@ const AddSubscription = () => {
                 color="primary"
                 onClick={() => setShow(false)}
               >
-            {isLoading ? <Spinner color="white" size="lg" /> : "Add Subscription"}
+                {isLoading ? <Spinner color="white" size="lg" /> : "Update"}
               </Button>
               <Button
                 type="reset"
@@ -209,4 +233,4 @@ const AddSubscription = () => {
   );
 };
 
-export default AddSubscription;
+export default EditSubscription;
