@@ -6,7 +6,8 @@ import logo from '@src/assets/images/logo/logo.svg'
 //Template config options
 const themeConfig = {
   app: {
-    appName: 'Vuexy',
+    // appName: 'Vuexy',
+    appName: 'NoBounce',
     appLogoImage: logo
   },
   layout: {
@@ -28,7 +29,7 @@ const themeConfig = {
     },
     customizer: false,
     scrollTop: true, // Enable scroll to top button
-    toastPosition: 'top-right' // top-left, top-center, top-right, bottom-left, bottom-center, bottom-right
+    toastPosition: 'bottom-right' // top-left, top-center, top-right, bottom-left, bottom-center, bottom-right
   }
 }
 

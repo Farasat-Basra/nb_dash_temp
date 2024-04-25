@@ -434,7 +434,7 @@ const DataTableOfUsers = () => {
           />
         </div>
       </Card>
-      <SidebarNewUsers open={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <SidebarNewUsers open={sidebarOpen} setOpen={setSidebarOpen}  toggleSidebar={toggleSidebar} />
     </Fragment>
   );
 };

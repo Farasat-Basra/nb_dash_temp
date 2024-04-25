@@ -13,7 +13,7 @@ import classnames from "classnames";
 import { useForm, Controller } from "react-hook-form";
 
 // ** Reactstrap Imports
-import { Button, Label, FormText, Form, Input } from "reactstrap";
+import { Button, Label, FormText, Form, Input, Spinner } from "reactstrap";
 
 // ** Store & Actions
 import { addUser } from "../store";
@@ -63,7 +63,7 @@ const countryOptions = [
   { label: "United States", value: "United States" },
 ];
 
-const SidebarNewUsers = ({ open, toggleSidebar }) => {
+const SidebarNewUsers = ({ open, setOpen, toggleSidebar }) => {
   // ** States
   const [data, setData] = useState(null);
   const [plan, setPlan] = useState("basic");
@@ -85,30 +85,34 @@ const SidebarNewUsers = ({ open, toggleSidebar }) => {
   const postTodo = async (data) => {
     const newData = {
       ...data,
-      firstName: data?.firstName,
-      lastName: data?.lastName,
-      email: data?.email,
-      phoneNumber: data?.phoneNumber,
-      status: "active",
-      country: data?.country.value,
-      city: data?.city.value,
-      state: data?.state.value,
+      firstName: data?.firstName || null,  
+      lastName: data?.lastName || null,
+      email: data?.email || null,
+      phoneNumber: data?.phoneNumber || null,
+      status: "active" || null,
+      country: data?.country.value || null,
+      city: data?.city.value || null,
+      state: data?.state.value || null,
     };
     try {
       const response = await axiosInstance.post("/admin/create/user", newData);
+      setOpen(false);
       return response.data;
     } catch (error) {
+      toast.error(error.response.data.message);
       console.log(error);
+      
     }
   };
 
-  const { mutate } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: postTodo,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: endpoint });
-      toast.success("User created successfully");
+      // toast.success("User created successfully");
     },
   });
+
 
   // ** Function to handle form submit
   const onSubmit = (data) => {
@@ -280,7 +284,7 @@ const SidebarNewUsers = ({ open, toggleSidebar }) => {
         </div>
 
         <Button type="submit" className="me-1" color="primary">
-          Submit
+       {isLoading ? <Spinner size="sm" color="light" /> : "Submit"}
         </Button>
         <Button type="reset" color="secondary" outline onClick={toggleSidebar}>
           Cancel

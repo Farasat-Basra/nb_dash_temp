@@ -15,6 +15,8 @@ import EditUser from "./EditUserForm";
 import DeleteUser from "./DeleteModal";
 import toast from "react-hot-toast";
 import { error } from "jquery";
+import { useDispatch } from "react-redux";
+import { setUserID } from "../../../redux/userSlice";
 // ** custom useQuery hook
 export const endpoint = "/admin/get/all/users";
 
@@ -40,6 +42,7 @@ export const useFetchUsers = () => {
       return fetchedData;
     },
     {
+      refetchOnMount: false,
       onError: (error) => {
         if (error.response.data.message === "Invalid user! Login again!") {
           navigate("/login");
@@ -101,10 +104,11 @@ export const advSearchColumns = [
 export const ActionsOption = ({ row }) => {
   const [show, setShow] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-
+  const dispatch = useDispatch();
   const toggle = (e) => {
     e.preventDefault();
     setShow(!show);
+    dispatch(setUserID(row.id))
   };
   const DeleteToggleModal = () => {
     setDeleteModal(!deleteModal);

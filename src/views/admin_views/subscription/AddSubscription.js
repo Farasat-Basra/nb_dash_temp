@@ -37,12 +37,11 @@ import axiosInstance from "../../../utility/axiosInstance";
 const statusOptions = [
   { value: "active", label: "Active" },
   { value: "inactive", label: "Inactive" },
-  { value: "suspended", label: "Suspended" },
 ];
 
 const defaultValues = {
   firstName: "Bob",
-  lastName: "Barton",
+  name: "Barton",
   username: "bob.dev",
 };
 
@@ -59,20 +58,23 @@ const AddSubscription = () => {
   } = useForm({ defaultValues });
 
   const postSubscription = async (data) => {
+    console.log("dataStatus", data.status)
     const newData = {
       ...data,
-      name: data.name,
-      amount: Number(data.amount),
-      status: data.status.value,
+      name: data.name || null ,
+      amount: Number(data.amount) || null,
+      status: data.status.value || null,
     };
     try {
       const response = await axiosInstance.post(
         "/admin/create/subscription/plan",
         newData
       );
+      setShow(false);
       return response.data;
     } catch (err) {
       console.log(err);
+      toast.error(err.response.data.message);
     }
   };
   const { mutate, isLoading } = useMutation({
@@ -82,9 +84,7 @@ const AddSubscription = () => {
       queryClient.invalidateQueries({ queryKey: endpoint });
       toast.success("Subscription added successfully");
     },
-    onError: () => {
-      toast.error("Failed to add subscription");
-    },
+
   });
 
   const onSubmit = (data) => {
@@ -127,6 +127,7 @@ const AddSubscription = () => {
                       {...field}
                       id="amount"
                       placeholder="amount"
+                      type="number"
                       value={field.value}
                       invalid={errors.amount && true}
                     />
@@ -134,7 +135,7 @@ const AddSubscription = () => {
                 }}
               />
               {errors.amount && (
-                <FormFeedback>Please enter a valid First Name</FormFeedback>
+                <FormFeedback>Please enter a valid Amount</FormFeedback>
               )}
             </Col>
             <Col md={6} xs={12}>
@@ -149,12 +150,12 @@ const AddSubscription = () => {
                     {...field}
                     id="name"
                     placeholder="name"
-                    invalid={errors.lastName && true}
+                    invalid={errors.name && true}
                   />
                 )}
               />
               {errors.name && (
-                <FormFeedback>Please enter a valid Last Name</FormFeedback>
+                <FormFeedback>Please enter a valid  Name</FormFeedback>
               )}
             </Col>
             <Col md={6} xs={12}>
@@ -182,24 +183,23 @@ const AddSubscription = () => {
               <Label className="form-label" for="email">
                 Expiry Date
               </Label>
-              <Input type="email" id="email" placeholder="example@domain.com" />
+              <Input type="date" id="email" placeholder="example@domain.com" />
             </Col>
             <Col xs={12} className="text-center mt-2 pt-50">
               <Button
-                type="submit"
-                className="me-1"
-                color="primary"
-                onClick={() => setShow(false)}
-              >
-            {isLoading ? <Spinner color="white" size="lg" /> : "Add Subscription"}
-              </Button>
-              <Button
                 type="reset"
                 color="secondary"
+                className="me-1"
                 outline
                 onClick={() => setShow(false)}
               >
                 Discard
+              </Button>
+              <Button
+                type="submit"
+                color="primary"
+              >
+            {isLoading ? <Spinner color="white" size="sm" /> : "Add"}
               </Button>
             </Col>
           </Row>

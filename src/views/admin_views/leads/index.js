@@ -13,10 +13,21 @@ import { User, UserPlus, UserCheck, UserX } from "react-feather";
 import "@styles/react/apps/app-users.scss";
 import Table from "../../apps/roles-permissions/roles/Table";
 import { MdOutlineLeaderboard } from "react-icons/md";
-import Breadcrumbs from '@components/breadcrumbs'
+import Breadcrumbs from "@components/breadcrumbs";
 import DataTableOfLeads from "./newTable";
+import { useFetchLeads } from "./leadsData";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { getAllLeads, getSingleLeads } from "../../../redux/leadsUser";
+import { useAppDispatch } from "../../../utility/instances";
 
 const LeadLists = () => {
+  const dispatch = useAppDispatch();
+  const { leads } = useSelector((state) => state.leadsUser);
+  const totalLeads = leads?.length;
+  useEffect(() => {
+    dispatch(getAllLeads());
+  }, []);
   return (
     <div className="app-user-list">
       <Breadcrumbs
@@ -30,7 +41,7 @@ const LeadLists = () => {
             color="primary"
             statTitle="Total Leads"
             icon={<MdOutlineLeaderboard size={20} />}
-            renderStats={<h3 className="fw-bolder mb-75">21,459</h3>}
+            renderStats={<h3 className="fw-bolder mb-75">{totalLeads}</h3>}
           />
         </Col>
         <Col lg="3" sm="6">

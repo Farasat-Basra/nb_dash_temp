@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 // ** Reactstrap Imports
 import {
@@ -16,6 +16,7 @@ import {
   ModalBody,
   ModalHeader,
   FormFeedback,
+  Spinner,
 } from "reactstrap";
 
 // ** Third Party Components
@@ -34,6 +35,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "../../../utility/axiosInstance";
 import { setUserID } from "../../../redux/userSlice";
 import { Link, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const statusOptions = [
   { value: "active", label: "Active" },
@@ -69,16 +71,8 @@ const defaultValues = {
 };
 
 const EditUser = ({ show, setShow, toggle, id }) => {
-  const { userID } = useSelector((state) => state.users);
-  // const params = useParams();
   const dispatch = useDispatch();
-  // const { data } = useQuery("singleUserData", async () => {
-  //   const response = await axiosInstance.get("/admin/get/single/user/" + id);
-  //   return response.data;
-  // });
-  // console.log("singleUserData", data);
 
-  // ** Hooks
   const {
     control,
     setError,
@@ -87,26 +81,48 @@ const EditUser = ({ show, setShow, toggle, id }) => {
     formState: { errors },
   } = useForm({ defaultValues });
 
-  const getTodos = async () => {
-    const response = await axiosInstance.get(
-      "/admin/get/single/user/" + userID
-    );
-    reset({
-      ...response.data,
-      firstName: response.data?.data.firstName || "",
-      lastName: response.data?.data.lastName || "",
-      email: response.data?.data.email || "",
-      phoneNumber: response.data?.data.phoneNumber || "",
-      role: response.data?.data.role || "",
-      status: response.data?.data.status || "",
-      country: response.data?.data.country || "",
-      state: response.data?.data.state || "",
-    });
-    return response.data;
-  };
+  const { userID } = useSelector((state) => state.users);
 
+  console.log("🚀 ~ EditUser ~ userID:", userID);
+
+  const getTodos = async () => {
+    console.log("🚀 ~ EditUser ~ userID:", userID);
+    try {
+      const response = await axiosInstance.get(
+        "/admin/get/single/user/" + userID
+      );
+      console.log("🚀 ~ getTodos ~ response.data:", response.data);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      // toast.error(error.response.data.message);
+    }
+  };
   const queryClient = useQueryClient();
-  const query = useQuery({ queryKey: ["todos"], queryFn: getTodos });
+  const { data } = useQuery({
+    queryKey: ["todos"],
+    queryFn: getTodos,
+    refetchIntervalInBackground: true,
+    // refetchOnWindowFocus: false,
+    // refetchOnMount: false,
+  });
+
+  useEffect(() => {
+    if (data) {
+      reset({
+        ...data,
+        firstName: data?.data.firstName || "",
+        lastName: data?.data.lastName || "",
+        email: data?.data.email || "",
+        phoneNumber: data?.data.phoneNumber || "",
+        role: data?.data.role || "",
+        status: data?.data.status || "",
+        country: data?.data.country || "",
+        state: data?.data.state || "",
+      });
+    }
+  }, [data]);
+
   const postTodo = async (data) => {
     const newData = {
       ...data,
@@ -125,8 +141,11 @@ const EditUser = ({ show, setShow, toggle, id }) => {
         newData
       );
       dispatch(setUserID(null));
+      setShow(false);
+      toast.success(response.data.message);
       return response.data;
     } catch (error) {
+      toast.error(error.response.data.message);
       console.log(error);
     }
   };
@@ -137,7 +156,7 @@ const EditUser = ({ show, setShow, toggle, id }) => {
       queryClient.invalidateQueries({ queryKey: [endpoint] });
     },
   });
-
+  const { isLoading } = mutation;
   const onSubmit = (data) => {
     mutation.mutate(data);
     // postTodo(data);
@@ -158,7 +177,7 @@ const EditUser = ({ show, setShow, toggle, id }) => {
     <Fragment>
       <div className="d-flex">
         <Edit size={14} className="me-50" />
-        <span onClick={() => dispatch(setUserID(id))}>Edit</span>
+        <span>Edit</span>
       </div>
       <Modal
         isOpen={show}
@@ -341,9 +360,9 @@ const EditUser = ({ show, setShow, toggle, id }) => {
                 type="submit"
                 className="me-1"
                 color="primary"
-                onClick={() => setShow(false)}
+                // onClick={() => setShow(false)}
               >
-                Submit
+                {isLoading ? <Spinner color="white" size="sm" /> : "Update"}
               </Button>
               <Button
                 type="reset"
