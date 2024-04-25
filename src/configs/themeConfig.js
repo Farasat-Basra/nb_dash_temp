@@ -7,7 +7,7 @@ import logo from '@src/assets/images/logo/logo.svg'
 const themeConfig = {
   app: {
     // appName: 'Vuexy',
-    appName: 'NoBounce',
+    appName: 'NoBounz',
     appLogoImage: logo
   },
   layout: {
